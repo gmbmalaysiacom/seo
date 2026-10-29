@@ -21,20 +21,30 @@ MUTED = "#657487"
 
 st.markdown(f"""
 <style>
-  .stApp {{ background: #F6F8FB; }}
-  [data-testid="stSidebar"] {{ background: #FFFFFF; border-right: 1px solid #E5EAF0; }}
-  .block-container {{ padding-top: 1.5rem; padding-bottom: 2rem; max-width: 1440px; }}
-  .hero {{ background: linear-gradient(110deg, {NAVY}, #244A60); color: white; padding: 24px 28px; border-radius: 16px; margin-bottom: 18px; }}
-  .hero h1 {{ color: white; font-size: 28px; margin: 0 0 6px 0; }}
-  .hero p {{ color: #DCE7EF; margin: 0; }}
-  .metric-card {{ background: white; border: 1px solid #E5EAF0; border-radius: 14px; padding: 16px 18px; min-height: 108px; }}
-  .metric-label {{ color: {MUTED}; font-size: 13px; margin-bottom: 8px; }}
-  .metric-value {{ color: {NAVY}; font-size: 28px; font-weight: 700; line-height: 1.1; }}
-  .metric-note {{ color: {MUTED}; font-size: 12px; margin-top: 7px; }}
-  .section-title {{ color: {NAVY}; font-size: 20px; font-weight: 700; margin: 12px 0 8px 0; }}
+  :root {{ --ink:#17263C; --teal:#167D83; --muted:#657487; --line:#E6E9E8; }}
+  .stApp {{ background: #FBFAF7; color: #17263C; }}
+  [data-testid="stSidebar"] {{ background: #F5F3EF; border-right: 1px solid #E6E3DD; }}
+  [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {{ color:#586576; }}
+  .block-container {{ padding-top: 1.3rem; padding-bottom: 3rem; max-width: 1380px; }}
+  .hero {{ background: #F0EEE8; color: {NAVY}; padding: 42px 44px; border-radius: 22px; margin: 8px 0 24px; border:1px solid #E8E4DB; }}
+  .hero h1 {{ color: {NAVY}; font-size: clamp(34px,4vw,54px); line-height:1.04; letter-spacing:-2px; margin: 0 0 14px; max-width:760px; }}
+  .hero p {{ color: #596675; font-size:16px; line-height:1.55; margin: 0; max-width:760px; }}
+  .eyebrow {{ text-transform:uppercase; letter-spacing:1.5px; font-size:11px; font-weight:750; color:{TEAL}; margin-bottom:12px; }}
+  .section-title {{ color: {NAVY}; font-size: 21px; font-weight: 720; letter-spacing:-.4px; margin: 22px 0 10px; }}
+  .section-subtitle {{ color:{MUTED}; font-size:14px; margin:-4px 0 16px; }}
+  .feature-card {{ background:white; border:1px solid #E7E8E5; border-radius:16px; padding:20px 21px; min-height:168px; box-shadow:0 2px 8px #17263C08; }}
+  .feature-kicker {{ font-size:11px; letter-spacing:1px; text-transform:uppercase; color:{TEAL}; font-weight:750; margin-bottom:12px; }}
+  .feature-title {{ font-size:18px; line-height:1.25; font-weight:720; color:{NAVY}; margin-bottom:8px; }}
+  .feature-copy {{ font-size:13px; line-height:1.55; color:{MUTED}; }}
+  .callout {{ background:#EAF3F1; border:1px solid #DCEAE6; border-radius:14px; padding:18px 20px; color:#334E50; }}
   .small-note {{ color: {MUTED}; font-size: 12px; }}
   .status-pill {{ display: inline-block; border-radius: 99px; padding: 4px 9px; font-size: 12px; background: #FFF4DB; color: #8B5A00; }}
-  div[data-testid="stMetric"] {{ background: white; border: 1px solid #E5EAF0; padding: 14px; border-radius: 12px; }}
+  div[data-testid="stMetric"] {{ background: white; border: 1px solid #E6E9E7; padding: 16px; border-radius: 14px; box-shadow:0 2px 8px #17263C06; }}
+  div[data-testid="stMetricLabel"] {{ color:#657487; }}
+  div[data-testid="stMetricValue"] {{ color:#17263C; }}
+  .stButton>button, .stDownloadButton>button {{ border-radius:10px; font-weight:650; }}
+  .stTextInput input, .stTextArea textarea {{ border-radius:10px; }}
+  [data-testid="stDataFrame"] {{ border:1px solid #E6E9E7; border-radius:12px; overflow:hidden; }}
   @media print {{ [data-testid="stSidebar"], header, footer, .stButton, .stDownloadButton {{ display:none !important; }} .stApp {{ background:white; }} }}
 </style>
 """, unsafe_allow_html=True)
@@ -172,36 +182,61 @@ def make_pdf(client, website, location, period, summary, actions, audit_df=None,
 
 # Sidebar
 with st.sidebar:
-    st.markdown(f"<div style='font-size:12px;color:{TEAL};font-weight:700;letter-spacing:1px;'>LOCAL SEO INTELLIGENCE</div><div style='font-size:22px;font-weight:750;color:{NAVY};margin:4px 0 18px;'>OS <span style='font-size:11px;color:{MUTED};'>MALAYSIA</span></div>", unsafe_allow_html=True)
-    page = st.radio("WORKSPACE", ["Dashboard", "Clients", "Website Audit", "Keywords", "Local SEO & GBP", "Competitors", "AI Visibility", "Client Report"], label_visibility="visible")
+    st.markdown(f"<div style='font-size:11px;color:{TEAL};font-weight:800;letter-spacing:1.6px;'>VERITAS-INSPIRED</div><div style='font-size:24px;font-weight:780;color:{NAVY};margin:4px 0 4px;'>Search Studio</div><div style='font-size:11px;color:{MUTED};margin-bottom:18px;'>SEO · AI visibility · Local</div>", unsafe_allow_html=True)
+    pages = ["Dashboard", "Clients", "Website Audit", "Keywords", "Local SEO & GBP", "Competitors", "AI Visibility", "Client Report"]
+    jump_to = st.session_state.pop("page_jump", "Dashboard")
+    page = st.radio("WORKSPACE", pages, index=pages.index(jump_to), label_visibility="visible")
     st.divider()
-    st.caption("Prototype · Demo records clearly marked")
-    st.caption("Cloud-ready source package; not hosted yet")
+    st.caption("Workspace tools")
+    st.caption("Demo records are clearly marked")
 
 if page == "Dashboard":
-    st.markdown(f"<div class='hero'><h1>Search visibility, made clear.</h1><p>One workspace for website health, local SEO, competitors and AI search visibility.</p></div>", unsafe_allow_html=True)
+    st.markdown("<div class='hero'><div class='eyebrow'>Search visibility, all in one place</div><h1>Rank on Google.<br>Get cited by AI.</h1><p>Understand what is holding your site back, where your brand appears in AI answers, and what to improve next. Explore audits, keyword research, local SEO and AI visibility from one workspace.</p></div>", unsafe_allow_html=True)
+    url_col, button_col = st.columns([4,1])
+    with url_col:
+        quick_url = st.text_input("Start with your website", placeholder="https://yourwebsite.com", label_visibility="collapsed", key="quick_site_url")
+    with button_col:
+        if st.button("Analyze my site", type="primary", use_container_width=True):
+            if safe_url(quick_url):
+                st.session_state.audit_url = quick_url
+                st.session_state.page_jump = "Website Audit"
+                st.rerun()
+            else:
+                st.warning("Enter a complete website URL to start your audit.")
+    st.markdown("<div class='small-note'>✓ Public page audit &nbsp;&nbsp; ✓ No account needed for this demo &nbsp;&nbsp; ✓ Sample metrics are never presented as live</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-title'>One workspace for every search channel</div><div class='section-subtitle'>Find the issues, track your visibility, and turn the findings into practical next steps.</div>", unsafe_allow_html=True)
+    features = st.columns(4)
+    feature_cards = [
+        ("SEO", "Audit and improve your site", "Check page titles, descriptions, headings, canonicals and links. Import verified keyword data as it becomes available."),
+        ("AI VISIBILITY", "Know when AI names your brand", "Log reproducible checks across ChatGPT, Gemini, Perplexity and Google AI results with evidence."),
+        ("LOCAL SEO", "Strengthen your local presence", "Review your Business Profile details, keep a local SEO checklist and import map grid results."),
+        ("CONTENT & REPORTING", "Make the next step clear", "Track competitors and build a concise PDF report with findings and prioritized actions."),
+    ]
+    for col, (kicker, title, copy) in zip(features, feature_cards):
+        col.markdown(f"<div class='feature-card'><div class='feature-kicker'>{kicker}</div><div class='feature-title'>{title}</div><div class='feature-copy'>{copy}</div></div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-title'>Your workspace</div>", unsafe_allow_html=True)
     c1,c2,c3,c4 = st.columns(4)
     c1.metric("Client workspaces", len(st.session_state.clients), "sample + your records")
-    c2.metric("Keywords", len(st.session_state.keywords), "rank data may be unmeasured")
+    c2.metric("Tracked keywords", len(st.session_state.keywords), "positions need verified imports")
     c3.metric("Competitors", len(st.session_state.competitors), "manual / imported")
-    c4.metric("Live data integrations", "0", "not connected")
+    c4.metric("Connected data sources", "0", "integrations not configured")
     left,right = st.columns([1.3,1])
     with left:
-        st.markdown("<div class='section-title'>Workspace overview</div>", unsafe_allow_html=True)
+        st.markdown("<div class='section-title'>Client workspaces</div>", unsafe_allow_html=True)
         st.dataframe(st.session_state.clients, use_container_width=True, hide_index=True)
         st.markdown("<div class='section-title'>Recommended next steps</div>", unsafe_allow_html=True)
-        st.markdown("- Run a website audit for a client URL.\n- Import real keyword performance from Search Console or your rank tracker.\n- Complete the Google Business Profile checklist.\n- Record AI visibility checks with evidence URLs.\n- Generate a branded PDF report for your client.")
+        st.markdown("1. Run a website audit for a client URL.\n2. Import verified keyword performance from Search Console or a rank tracker.\n3. Complete the Google Business Profile checklist.\n4. Record AI visibility checks with evidence URLs.\n5. Generate a client report with the findings.")
     with right:
-        st.markdown("<div class='section-title'>Data connection status</div>", unsafe_allow_html=True)
-        st.markdown("""
-        **Website HTML audit** · Available  
-        **Google Search Console** · CSV import  
-        **Google Maps geogrid** · Import/manual only  
-        **Google Business Profile API** · Not connected  
-        **AI search monitoring** · Manual evidence log  
-        **Backlink / search volume APIs** · Not connected
-        """)
-        st.info("Sample rows are examples only. No sample ranking, traffic, or AI mention is presented as a live measurement.")
+        st.markdown("<div class='section-title'>Data source status</div>", unsafe_allow_html=True)
+        st.markdown("""<div class='callout'>
+        <b>Website HTML audit</b> · Available<br><br>
+        <b>Search Console</b> · CSV import<br><br>
+        <b>Maps geogrid</b> · Manual / import<br><br>
+        <b>AI engine monitoring</b> · Evidence log<br><br>
+        <b>Business Profile API</b> · Not connected<br><br>
+        <b>Search volume & backlinks</b> · Not connected
+        </div>""", unsafe_allow_html=True)
+        st.caption("Sample rows are examples. No sample ranking, traffic or AI mention is presented as a live measurement.")
 
 elif page == "Clients":
     st.markdown("<div class='section-title'>Client workspaces</div>", unsafe_allow_html=True)
@@ -222,7 +257,7 @@ elif page == "Clients":
 elif page == "Website Audit":
     st.markdown("<div class='section-title'>Website SEO audit</div>", unsafe_allow_html=True)
     st.caption("A fast check of public HTML. It does not crawl the full site or measure Core Web Vitals.")
-    url = st.text_input("Page URL", placeholder="https://yourdomain.com/")
+    url = st.text_input("Page URL", value=st.session_state.get("audit_url", ""), placeholder="https://yourdomain.com/")
     if st.button("Run website audit", type="primary"):
         if not safe_url(url):
             st.error("Enter a complete https:// or http:// URL.")
